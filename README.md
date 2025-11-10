@@ -1,4 +1,4 @@
-# Gait Physiological Signal Dashboard - StrideX
+# [Gait Physiological Signal Dashboard - StrideX](https://limminsik.github.io/StrideX_QC/)
 
 ## 개요
 
@@ -212,6 +212,5 @@ StrideX는 **["초거대 AI 확산 생태계 조성 사업"](https://www.msit.go
 
 ## Information
 
-- **Version**: 1.1
-- **Date**: 2025.01
+- **Date**: 2025.11
 - **Contact**: ms4002@gachon.ac.kr
