@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Gait Physiological Signal Dashboard — StrideX v2.0</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 2px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .validation-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-label {
+            font-size: 0.75em;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pass-fail-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pass-fail-btn {
+            padding: 8px 20px;
+            border: 2px solid;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .pass-fail-btn.pass {
+            border-color: #28a745;
+            color: #28a745;
+        }
+
+        .pass-fail-btn.pass:hover,
+        .pass-fail-btn.pass.active {
+            background: #28a745;
+            color: white;
+        }
+
+        .pass-fail-btn.fail {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .pass-fail-btn.fail:hover,
+        .pass-fail-btn.fail.active {
+            background: #dc3545;
+            color: white;
+        }
+
+        .download-btn {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            width: 1px;
+            height: 40px;
+            background: #e9ecef;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr 380px;
+            height: calc(100vh - 80px);
+            gap: 0;
+        }
+
+        /* 왼쪽 Subjects 패널 */
+        .subjects-panel {
+            background: white;
+            border-right: 2px solid #e9ecef;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .subjects-panel h2 {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .upload-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #3498db;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            background: #e3f2fd;
+            border-color: #2980b9;
+        }
+
+        .upload-section p {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        .subject-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .subject-item:hover {
+            background: #e3f2fd;
+            border-color: #3498db;
+        }
+
+        .subject-item.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+
+        .subject-item h3 {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .subject-sensors {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .sensor-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .subject-item.active .sensor-badge {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .sensor-badge.available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .sensor-badge.missing {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .sensor-badge.insole { border-left: 3px solid #3498db; }
+        .sensor-badge.imu { border-left: 3px solid #e74c3c; }
+        .sensor-badge.pad { border-left: 3px solid #f39c12; }
+
+        .data-complete-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7em;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .data-complete-badge.complete {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .data-complete-badge.incomplete {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* 중앙 데이터 패널 */
+        .data-panel {
+            background: #f8f9fa;
+            overflow-y: auto;
+            padding: 25px;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 1.4em;
+        }
+
+        /* Gait Cycle 강조 스타일 */
+        .gait-cycle-highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .gait-cycle-highlight h3 {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gait-cycle-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .gait-cycle-day {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .gait-cycle-day .day-label {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .gait-cycle-day .cycle-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+
+        .gait-cycle-day .lr-label {
+            font-size: 0.75em;
+            opacity: 0.8;
+            display: flex;
+            justify-content: space-around;
+            margin-top: 5px;
+        }
+
+        .metric-row {
+            display: flex;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            flex: 0 0 200px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        .metric-label-sub {
+            font-size: 0.75em;
+            color: #999;
+            font-weight: 400;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .metric-values {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .value-badge {
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85em;
+            min-width: 60px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .value-badge.L {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .value-badge.L::before {
+            content: 'L';
+            font-size: 0.75em;
+            opacity: 0.7;
+        }
+
+        .value-badge.R {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .value-badge.R::before {
+            content: 'R';
+            font-size: 0.75em;
+            opacity: 0.7;
+        }
+
+        .range-bar-container {
+            flex: 1;
+            position: relative;
+        }
+
+        .range-bar {
+            height: 8px;
+            background: linear-gradient(to right, #ffcdd2 0%, #c8e6c9 100%);
+            border-radius: 4px;
+            position: relative;
+            overflow: visible;
+        }
+
+        .range-marker {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .range-marker.L {
+            background: #1976d2;
+            z-index: 2;
+        }
+
+        .range-marker.R {
+            background: #f57c00;
+            z-index: 1;
+        }
+
+        /* 오른쪽 Meta/Labels 패널 */
+        .meta-panel {
+            background: white;
+            border-left: 2px solid #e9ecef;
+            overflow-y: auto;
+            padding: 25px;
+        }
+
+        .meta-section {
+            margin-bottom: 30px;
+        }
+
+        .meta-section h2 {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .meta-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .meta-item:last-child {
+            border-bottom: none;
+        }
+
+        .meta-label {
+            color: #666;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .meta-value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        /* Labels 섹션 - 강조 스타일 */
+        .labels-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            box-shadow: 0 5px 20px rgba(245, 87, 108, 0.3);
+        }
+
+        .labels-section h2 {
+            color: white;
+            border-bottom-color: rgba(255, 255, 255, 0.3);
+            font-size: 1.3em;
+        }
+
+        .class-display {
+            text-align: center;
+            padding: 25px;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .class-number {
+            font-size: 4em;
+            font-weight: 900;
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .class-label {
+            font-size: 1.2em;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+
+        .class-normal {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .class-abnormal {
+            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
+        }
+
+        .label-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .label-item:last-child {
+            border-bottom: none;
+        }
+
+        .label-item .meta-label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .label-item .meta-value {
+            color: white;
+            font-weight: 700;
+        }
+
+        .diagnosis-text {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-style: italic;
+            backdrop-filter: blur(10px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .empty-state p {
+            font-size: 0.95em;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        /* 스크롤바 스타일 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .validation-alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .validation-alert.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .validation-alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .action-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-btn.primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .action-btn.secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .action-btn.secondary:hover {
+            background: #7f8c8d;
+            transform: translateY(-1px);
+        }
+
+        .action-btn.danger {
+            background: #e74c3c;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .action-btn.danger:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚶 Gait Physiological Signal Dashboard — StrideX</h1>
+        
+        <div class="header-controls">
+            <div class="validation-controls">
+                <div class="control-group">
+                    <span class="control-label">ID 검증</span>
+                    <div class="pass-fail-buttons">
+                        <button class="pass-fail-btn pass" onclick="setValidation('id', 'pass')">Pass</button>
+                        <button class="pass-fail-btn fail" onclick="setValidation('id', 'fail')">Fail</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <span class="control-label">Gait Cycle</span>
+                    <div class="pass-fail-buttons">
+                        <button class="pass-fail-btn pass" onclick="setValidation('gait', 'pass')">Pass</button>
+                        <button class="pass-fail-btn fail" onclick="setValidation('gait', 'fail')">Fail</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <span class="control-label">Labeling</span>
+                    <div class="pass-fail-buttons">
+                        <button class="pass-fail-btn pass" onclick="setValidation('label', 'pass')">Pass</button>
+                        <button class="pass-fail-btn fail" onclick="setValidation('label', 'fail')">Fail</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <button class="download-btn" onclick="downloadValidationResults()" id="downloadBtn">
+                <span>📥</span>
+                <span>Download CSV</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="dashboard">
+        <!-- 왼쪽: Subjects 패널 -->
+        <div class="subjects-panel">
+            <h2>Subjects</h2>
+            
+            <div class="upload-section" id="uploadSection">
+                <div style="font-size: 2em; margin-bottom: 8px;">📁</div>
+                <strong>데이터 추가</strong>
+                <p>JSON 파일 또는 폴더 업로드</p>
+                <input type="file" id="fileInput" accept=".json" multiple style="display: none;">
+                <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;">
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                <button class="action-btn primary" onclick="document.getElementById('fileInput').click()" style="flex: 1;">
+                    📄 파일 선택
+                </button>
+                <button class="action-btn secondary" onclick="document.getElementById('folderInput').click()" style="flex: 1;">
+                    📁 폴더 선택
+                </button>
+            </div>
+            
+            <button class="action-btn danger" onclick="clearAllData()" style="width: 100%;">
+                🗑️ 전체 초기화
+            </button>
+
+            <div id="subjectsList"></div>
+        </div>
+
+        <!-- 중앙: 데이터 패널 -->
+        <div class="data-panel" id="dataPanel">
+            <div class="empty-state">
+                <div class="empty-state-icon">📊</div>
+                <h3>데이터를 선택하세요</h3>
+                <p>왼쪽에서 Subject를 선택하거나<br>새로운 데이터를 업로드하세요</p>
+            </div>
+        </div>
+
+        <!-- 오른쪽: Meta/Labels 패널 -->
+        <div class="meta-panel" id="metaPanel">
+            <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <h3>환자 정보</h3>
+                <p>Subject를 선택하면<br>상세 정보가 표시됩니다</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let subjects = {};
+        let currentSubjectId = null;
+        let validationResults = {}; // { subjectId: { id: 'pass/fail', gait: 'pass/fail', label: 'pass/fail' } }
+
+        const uploadSection = document.getElementById('uploadSection');
+        const fileInput = document.getElementById('fileInput');
+        const folderInput = document.getElementById('folderInput');
+        const subjectsList = document.getElementById('subjectsList');
+        const dataPanel = document.getElementById('dataPanel');
+        const metaPanel = document.getElementById('metaPanel');
+
+        // Pass/Fail 검증 설정
+        function setValidation(type, status) {
+            if (!currentSubjectId) {
+                alert('Subject를 먼저 선택해주세요.');
+                return;
+            }
+
+            if (!validationResults[currentSubjectId]) {
+                validationResults[currentSubjectId] = {
+                    id: null,
+                    gait: null,
+                    label: null
+                };
+            }
+
+            validationResults[currentSubjectId][type] = status;
+            updateValidationButtons();
+            updateSubjectsList(); // Subject 리스트에 검증 상태 표시 업데이트
+        }
+
+        // 전체 데이터 초기화
+        function clearAllData() {
+            if (Object.keys(subjects).length === 0) {
+                alert('초기화할 데이터가 없습니다.');
+                return;
+            }
+
+            if (confirm('정말로 모든 데이터를 초기화하시겠습니까?\n(업로드된 파일과 검증 결과가 모두 삭제됩니다)')) {
+                subjects = {};
+                currentSubjectId = null;
+                validationResults = {};
+                
+                updateSubjectsList();
+                updateValidationButtons();
+                
+                // 빈 상태 표시
+                dataPanel.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <h3>데이터를 선택하세요</h3>
+                        <p>왼쪽에서 Subject를 선택하거나<br>새로운 데이터를 업로드하세요</p>
+                    </div>
+                `;
+                
+                metaPanel.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <h3>환자 정보</h3>
+                        <p>Subject를 선택하면<br>상세 정보가 표시됩니다</p>
+                    </div>
+                `;
+                
+                alert('모든 데이터가 초기화되었습니다.');
+            }
+        }
+
+        // 검증 버튼 상태 업데이트
+        function updateValidationButtons() {
+            const buttons = document.querySelectorAll('.pass-fail-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            if (currentSubjectId && validationResults[currentSubjectId]) {
+                const result = validationResults[currentSubjectId];
+                
+                if (result.id === 'pass') {
+                    document.querySelector('.control-group:nth-child(1) .pass-fail-btn.pass').classList.add('active');
+                } else if (result.id === 'fail') {
+                    document.querySelector('.control-group:nth-child(1) .pass-fail-btn.fail').classList.add('active');
+                }
+                
+                if (result.gait === 'pass') {
+                    document.querySelector('.control-group:nth-child(2) .pass-fail-btn.pass').classList.add('active');
+                } else if (result.gait === 'fail') {
+                    document.querySelector('.control-group:nth-child(2) .pass-fail-btn.fail').classList.add('active');
+                }
+                
+                if (result.label === 'pass') {
+                    document.querySelector('.control-group:nth-child(3) .pass-fail-btn.pass').classList.add('active');
+                } else if (result.label === 'fail') {
+                    document.querySelector('.control-group:nth-child(3) .pass-fail-btn.fail').classList.add('active');
+                }
+            }
+        }
+
+        // CSV 다운로드
+        function downloadValidationResults() {
+            if (Object.keys(validationResults).length === 0) {
+                alert('검증된 데이터가 없습니다.');
+                return;
+            }
+
+            let csv = 'Subject ID,ID Validation,Gait Cycle Validation,Labeling Validation\n';
+            
+            Object.keys(subjects).forEach(subjectId => {
+                const result = validationResults[subjectId] || { id: '', gait: '', label: '' };
+                csv += `${subjectId},${result.id || 'Not Reviewed'},${result.gait || 'Not Reviewed'},${result.label || 'Not Reviewed'}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `validation_results_${timestamp}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        uploadSection.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+            fileInput.value = ''; // 같은 파일 재선택 가능하게
+        });
+
+        folderInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+            folderInput.value = ''; // 같은 폴더 재선택 가능하게
+        });
+
+        function handleFiles(files) {
+            let processedCount = 0;
+            let successCount = 0;
+            let errorFiles = [];
+            let totalFiles = 0;
+            
+            // JSON 파일만 필터링
+            const jsonFiles = Array.from(files).filter(file => file.name.endsWith('.json'));
+            totalFiles = jsonFiles.length;
+            
+            if (totalFiles === 0) {
+                alert('JSON 파일이 없습니다.');
+                return;
+            }
+
+            jsonFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        // 데이터 구조 검증
+                        if (!data.meta || !data.meta.patient || !data.meta.patient.id) {
+                            throw new Error('유효하지 않은 JSON 구조: meta.patient.id가 없습니다.');
+                        }
+                        
+                        const subjectId = data.meta.patient.id;
+                        const type = detectFileType(file.name);
+                        
+                        if (type === 'unknown') {
+                            console.warn(`파일 유형을 알 수 없습니다: ${file.name}. insole/imu/pad 중 하나를 파일명에 포함해주세요.`);
+                        }
+
+                        if (!subjects[subjectId]) {
+                            subjects[subjectId] = {
+                                id: subjectId,
+                                files: {}
+                            };
+                        }
+                        
+                        // 기존 데이터가 있으면 덮어쓰기 확인
+                        if (subjects[subjectId].files[type]) {
+                            console.log(`${subjectId}의 ${type} 데이터가 업데이트되었습니다.`);
+                        }
+                        
+                        subjects[subjectId].files[type] = data;
+                        successCount++;
+                        
+                    } catch (error) {
+                        console.error(`파일 파싱 오류: ${file.name}`, error);
+                        errorFiles.push({ name: file.name, error: error.message });
+                    } finally {
+                        processedCount++;
+                        
+                        // 모든 파일 처리 완료 시
+                        if (processedCount === totalFiles) {
+                            updateSubjectsList();
+                            
+                            // 새로 추가된 subject가 있으면 자동 선택
+                            if (!currentSubjectId || !subjects[currentSubjectId]) {
+                                const sortedIds = Object.keys(subjects).sort((a, b) => 
+                                    a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' })
+                                );
+                                if (sortedIds.length > 0) {
+                                    selectSubject(sortedIds[0]);
+                                }
+                            }
+                            
+                            // 결과 메시지
+                            let message = `${successCount}/${totalFiles}개의 파일이 성공적으로 업로드되었습니다.`;
+                            if (errorFiles.length > 0) {
+                                message += `\n\n오류 발생 파일 (${errorFiles.length}개):`;
+                                errorFiles.forEach(ef => {
+                                    message += `\n- ${ef.name}: ${ef.error}`;
+                                });
+                            }
+                            alert(message);
+                        }
+                    }
+                };
+                
+                reader.onerror = () => {
+                    console.error(`파일 읽기 오류: ${file.name}`);
+                    errorFiles.push({ name: file.name, error: '파일을 읽을 수 없습니다.' });
+                    processedCount++;
+                    
+                    if (processedCount === totalFiles) {
+                        updateSubjectsList();
+                        alert(`${successCount}/${totalFiles}개의 파일이 업로드되었습니다.`);
+                    }
+                };
+                
+                reader.readAsText(file);
+            });
+        }
+
+        function detectFileType(filename) {
+            if (filename.includes('imu')) return 'imu';
+            if (filename.includes('insole')) return 'insole';
+            if (filename.includes('pad')) return 'pad';
+            return 'unknown';
+        }
+
+        function updateSubjectsList() {
+            subjectsList.innerHTML = '';
+            
+            // Subject ID로 정렬 (숫자 포함 문자열 자연 정렬)
+            const sortedSubjects = Object.values(subjects).sort((a, b) => {
+                return a.id.localeCompare(b.id, undefined, { numeric: true, sensitivity: 'base' });
+            });
+            
+            sortedSubjects.forEach(subject => {
+                const hasInsole = subject.files.insole ? true : false;
+                const hasIMU = subject.files.imu ? true : false;
+                const hasPad = subject.files.pad ? true : false;
+                const isComplete = hasInsole && hasIMU && hasPad;
+
+                const validation = validationResults[subject.id];
+                let validationBadge = '';
+                
+                if (validation) {
+                    const validatedCount = [validation.id, validation.gait, validation.label].filter(v => v).length;
+                    const allPass = validation.id === 'pass' && validation.gait === 'pass' && validation.label === 'pass';
+                    const hasFail = validation.id === 'fail' || validation.gait === 'fail' || validation.label === 'fail';
+                    
+                    if (allPass) {
+                        validationBadge = '<span style="margin-left: 8px; color: #28a745; font-size: 0.9em;">✓ 검증완료</span>';
+                    } else if (hasFail) {
+                        validationBadge = '<span style="margin-left: 8px; color: #dc3545; font-size: 0.9em;">✗ 재검토</span>';
+                    } else if (validatedCount > 0) {
+                        validationBadge = `<span style="margin-left: 8px; color: #ffc107; font-size: 0.9em;">⋯ ${validatedCount}/3</span>`;
+                    }
+                }
+
+                const item = document.createElement('div');
+                item.className = `subject-item ${currentSubjectId === subject.id ? 'active' : ''}`;
+                item.onclick = () => selectSubject(subject.id);
+                
+                item.innerHTML = `
+                    <h3>
+                        ${subject.id}
+                        <span class="data-complete-badge ${isComplete ? 'complete' : 'incomplete'}">
+                            ${isComplete ? '✓ 3/3' : `${[hasInsole, hasIMU, hasPad].filter(Boolean).length}/3`}
+                        </span>
+                        ${validationBadge}
+                    </h3>
+                    <div class="subject-sensors">
+                        <span class="sensor-badge insole ${hasInsole ? 'available' : 'missing'}">
+                            ${hasInsole ? '✓' : '✗'} insole
+                        </span>
+                        <span class="sensor-badge imu ${hasIMU ? 'available' : 'missing'}">
+                            ${hasIMU ? '✓' : '✗'} imu
+                        </span>
+                        <span class="sensor-badge pad ${hasPad ? 'available' : 'missing'}">
+                            ${hasPad ? '✓' : '✗'} pad
+                        </span>
+                    </div>
+                `;
+                
+                subjectsList.appendChild(item);
+            });
+        }
+
+        function selectSubject(subjectId) {
+            currentSubjectId = subjectId;
+            updateSubjectsList();
+            updateValidationButtons(); // 검증 버튼 상태 업데이트
+            
+            const subject = subjects[subjectId];
+            displayDataPanel(subject);
+            displayMetaPanel(subject);
+        }
+
+        function displayDataPanel(subject) {
+            const hasInsole = subject.files.insole ? true : false;
+            const hasIMU = subject.files.imu ? true : false;
+            const hasPad = subject.files.pad ? true : false;
+
+            let html = '';
+
+            // ID 검증 알림
+            if (hasInsole && hasIMU && hasPad) {
+                const insoleId = subject.files.insole.meta.patient.id;
+                const imuId = subject.files.imu.meta.patient.id;
+                const padId = subject.files.pad.meta.patient.id;
+                const allMatch = insoleId === imuId && imuId === padId;
+
+                if (allMatch) {
+                    html += `<div class="validation-alert success"><span>✓</span><span><strong>ID 검증 완료:</strong> 모든 센서 데이터의 ID가 일치합니다 (${insoleId})</span></div>`;
+                } else {
+                    html += `<div class="validation-alert error"><span>✗</span><span><strong>ID 불일치:</strong> Insole(${insoleId}), IMU(${imuId}), Pad(${padId})</span></div>`;
+                }
+            } else {
+                html += `<div class="validation-alert error"><span>⚠️</span><span><strong>데이터 불완전:</strong> 3가지 센서 데이터가 모두 필요합니다</span></div>`;
+            }
+
+            // Smart Insole - Gait Cycle 강조
+            if (hasInsole) {
+                const insole = subject.files.insole.data.smart_insole.values;
+                const days = Object.keys(insole);
+                
+                html += `
+                    <div class="gait-cycle-highlight">
+                        <h3><span>👟</span> Smart Insole - Gait Cycle (Day 1-10)</h3>
+                        <div class="gait-cycle-grid">
+                `;
+
+                days.forEach(day => {
+                    const data = insole[day];
+                    const strideL = parseFloat(data.stride_length.L);
+                    const strideR = parseFloat(data.stride_length.R);
+                    const speed = parseFloat(data.gait_speed);
+                    const speedMS = speed / 3.6;
+                    const cycleL = (strideL / 100) / speedMS;
+                    const cycleR = (strideR / 100) / speedMS;
+                    const avgCycle = (cycleL + cycleR) / 2;
+
+                    html += `
+                        <div class="gait-cycle-day">
+                            <div class="day-label">${day.replace('day_', 'Day ')}</div>
+                            <div class="cycle-value">${avgCycle.toFixed(2)}s</div>
+                            <div class="lr-label">
+                                <span>L: ${cycleL.toFixed(2)}</span>
+                                <span>R: ${cycleR.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                        <div style="font-size: 0.85em; opacity: 0.9; margin-top: 10px;">
+                            <strong>계산식:</strong> Gait Cycle = Stride Length (m) / Gait Speed (m/s)
+                        </div>
+                    </div>
+                `;
+
+                // 다른 Insole 데이터
+                html += `
+                    <div class="section-card">
+                        <div class="section-title"><span class="icon">👟</span> Smart Insole Data</div>
+                `;
+
+                // Balance
+                const avgBalanceL = days.reduce((sum, day) => sum + parseFloat(insole[day].balance.L), 0) / days.length;
+                const avgBalanceR = days.reduce((sum, day) => sum + parseFloat(insole[day].balance.R), 0) / days.length;
+                
+                html += createMetricRow('Balance', avgBalanceL, avgBalanceR, '%', 0, 100);
+
+                // Stride Length
+                const avgStrideL = days.reduce((sum, day) => sum + parseFloat(insole[day].stride_length.L), 0) / days.length;
+                const avgStrideR = days.reduce((sum, day) => sum + parseFloat(insole[day].stride_length.R), 0) / days.length;
+                
+                html += createMetricRow('Stride Length', avgStrideL, avgStrideR, 'cm', 50, 200);
+
+                // Gait Speed
+                const avgSpeed = days.reduce((sum, day) => sum + parseFloat(insole[day].gait_speed), 0) / days.length;
+                
+                html += `
+                    <div class="metric-row">
+                        <div class="metric-label">Gait Speed</div>
+                        <div class="metric-values">
+                            <div class="value-badge" style="background: #e8f5e9; color: #2e7d32; border-color: #2e7d32;">
+                                ${avgSpeed.toFixed(1)} km/h
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                html += `</div>`;
+
+                // Foot Pressure 차트
+                html += `<div class="chart-container" id="footPressureChart"></div>`;
+
+                setTimeout(() => {
+                    // Foot Pressure 차트
+                    const foreL = days.map(day => parseFloat(insole[day].foot_pressure_fore.L));
+                    const midL = days.map(day => parseFloat(insole[day].foot_pressure_mid.L));
+                    const rearL = days.map(day => parseFloat(insole[day].foot_pressure_rear.L));
+
+                    Plotly.newPlot('footPressureChart', [{
+                        x: dayLabels,
+                        y: foreL,
+                        name: 'Forefoot',
+                        type: 'scatter',
+                        mode: 'lines',
+                        stackgroup: 'one',
+                        fillcolor: '#1976d2'
+                    }, {
+                        x: dayLabels,
+                        y: midL,
+                        name: 'Midfoot',
+                        type: 'scatter',
+                        mode: 'lines',
+                        stackgroup: 'one',
+                        fillcolor: '#f57c00'
+                    }, {
+                        x: dayLabels,
+                        y: rearL,
+                        name: 'Rearfoot',
+                        type: 'scatter',
+                        mode: 'lines',
+                        stackgroup: 'one',
+                        fillcolor: '#9c27b0'
+                    }], {
+                        title: {
+                            text: 'Foot Pressure Distribution (Left)',
+                            font: { size: 16, family: 'Segoe UI, sans-serif' }
+                        },
+                        xaxis: { 
+                            title: 'Day',
+                            font: { family: 'Segoe UI, sans-serif' }
+                        },
+                        yaxis: { 
+                            title: 'Pressure (%)',
+                            font: { family: 'Segoe UI, sans-serif' }
+                        },
+                        legend: {
+                            font: { family: 'Segoe UI, sans-serif' }
+                        },
+                        margin: { t: 50, r: 20, b: 50, l: 60 },
+                        font: { family: 'Segoe UI, sans-serif' }
+                    }, {
+                        responsive: true,
+                        displayModeBar: false
+                    });
+                }, 100);
+            }
+
+            // IMU Sensor
+            if (hasIMU) {
+                const imu = subject.files.imu.data.imu_sensor.values;
+                
+                html += `
+                    <div class="section-card">
+                        <div class="section-title"><span class="icon">📊</span> IMU Sensor</div>
+                `;
+
+                html += createMetricRow('Gait Cycle', parseFloat(imu.gait_cycle.L), parseFloat(imu.gait_cycle.R), 's', 0.5, 2);
+                html += createMetricRow('Knee Flexion Max', parseFloat(imu.knee_flexion_max.L), parseFloat(imu.knee_flexion_max.R), 'deg', 0, 90);
+                html += createMetricRow('Knee Extension Max', parseFloat(imu.knee_extension_max.L), parseFloat(imu.knee_extension_max.R), 'deg', 0, 30);
+                html += createMetricRow('Foot Clearance', parseFloat(imu.foot_clearance.L), parseFloat(imu.foot_clearance.R), 'mm', 0, 30);
+
+                html += `</div>`;
+            }
+
+            // Gait Pad
+            if (hasPad) {
+                const pad = subject.files.pad.data.gait_pad.values;
+                
+                html += `
+                    <div class="section-card">
+                        <div class="section-title"><span class="icon">🎯</span> Gait Pad</div>
+                `;
+
+                html += createMetricRow('Step Length', parseFloat(pad.step_length.L), parseFloat(pad.step_length.R), 'cm', 30, 90);
+                html += createMetricRow('Stance Phase Rate', parseFloat(pad.stance_phase_rate.L), parseFloat(pad.stance_phase_rate.R), '%', 50, 70);
+                html += createMetricRow('Swing Phase Rate', parseFloat(pad.swing_phase_rate.L), parseFloat(pad.swing_phase_rate.R), '%', 30, 50);
+                html += createMetricRow('Double Support Time', parseFloat(pad.double_support_time.L), parseFloat(pad.double_support_time.R), '%', 10, 40);
+
+                html += `
+                    <div class="metric-row">
+                        <div class="metric-label">Velocity</div>
+                        <div class="metric-values">
+                            <div class="value-badge" style="background: #e8f5e9; color: #2e7d32; border-color: #2e7d32;">
+                                ${parseFloat(pad.velocity).toFixed(1)} cm/s
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                html += `</div>`;
+            }
+
+            dataPanel.innerHTML = html;
+        }
+
+        function createMetricRow(label, valueL, valueR, unit, min, max) {
+            const range = max - min;
+            const posL = ((valueL - min) / range) * 100;
+            const posR = ((valueR - min) / range) * 100;
+
+            // 단위 정보 추가
+            let subLabel = '';
+            if (label.includes('Gait Cycle')) {
+                subLabel = '<span class="metric-label-sub">/ gait_cycle</span>';
+            } else if (label.includes('Knee Flexion')) {
+                subLabel = '<span class="metric-label-sub">/ knee_flexion_max</span>';
+            } else if (label.includes('Knee Extension')) {
+                subLabel = '<span class="metric-label-sub">/ knee_extension_max</span>';
+            } else if (label.includes('Foot Clearance')) {
+                subLabel = '<span class="metric-label-sub">/ foot_clearance</span>';
+            } else if (label.includes('Step Length')) {
+                subLabel = '<span class="metric-label-sub">/ step_length</span>';
+            } else if (label.includes('Stance Phase')) {
+                subLabel = '<span class="metric-label-sub">/ stance_phase_rate</span>';
+            } else if (label.includes('Swing Phase')) {
+                subLabel = '<span class="metric-label-sub">/ swing_phase_rate</span>';
+            } else if (label.includes('Double Support')) {
+                subLabel = '<span class="metric-label-sub">/ double_support_time</span>';
+            } else if (label.includes('Balance')) {
+                subLabel = '<span class="metric-label-sub">/ balance</span>';
+            } else if (label.includes('Stride Length')) {
+                subLabel = '<span class="metric-label-sub">/ stride_length</span>';
+            }
+
+            return `
+                <div class="metric-row">
+                    <div class="metric-label">
+                        ${label}
+                        ${subLabel}
+                    </div>
+                    <div class="metric-values">
+                        <div class="value-badge L">${valueL.toFixed(1)}</div>
+                        <div class="value-badge R">${valueR.toFixed(1)}</div>
+                        <div class="range-bar-container">
+                            <div class="range-bar">
+                                <div class="range-marker L" style="left: ${Math.max(0, Math.min(100, posL))}%;"></div>
+                                <div class="range-marker R" style="left: ${Math.max(0, Math.min(100, posR))}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayMetaPanel(subject) {
+            const hasInsole = subject.files.insole ? true : false;
+            
+            if (!hasInsole) {
+                metaPanel.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <h3>데이터 부족</h3>
+                        <p>Insole 데이터가 필요합니다</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const patient = subject.files.insole.meta.patient;
+            const labels = subject.files.insole.labels;
+            const isNormal = labels.annotation.class === '0';
+
+            let html = `
+                <div class="meta-section">
+                    <h2>Meta</h2>
+                    ${createMetaItem('id', patient.id)}
+                    ${createMetaItem('gender', patient.gender === '0' ? '여성' : '남성')}
+                    ${createMetaItem('age', patient.age)}
+                    ${createMetaItem('height', patient.height)}
+                    ${createMetaItem('weight', patient.weight)}
+                    ${createMetaItem('bmi', patient.bmi)}
+                    ${createMetaItem('foot_size', patient.foot_size)}
+                    ${createMetaItem('leg_length_L', patient.leg_length_L)}
+                    ${createMetaItem('leg_length_R', patient.leg_length_R)}
+                    ${createMetaItem('condition', patient.condition)}
+                    ${patient.symptom ? createMetaItem('symptom', patient.symptom) : ''}
+                </div>
+
+                <div class="labels-section ${isNormal ? 'class-normal' : 'class-abnormal'}">
+                    <h2>Labels</h2>
+                    <div class="class-display">
+                        <div style="font-size: 0.9em; opacity: 0.9;">Classification</div>
+                        <div class="class-number">${labels.annotation.class}</div>
+                        <div class="class-label">${isNormal ? '정상' : '무릎관절염'}</div>
+                    </div>
+                    ${labels.annotation.side ? `<div class="label-item">${createMetaItem('side (병변 측)', labels.annotation.side)}</div>` : ''}
+                    ${labels.annotation.region ? `<div class="label-item">${createMetaItem('region (부위)', labels.annotation.region)}</div>` : ''}
+                    ${labels.diagnosis_text && labels.diagnosis_text !== 'None' ? `<div class="diagnosis-text">${labels.diagnosis_text}</div>` : ''}
+                </div>
+            `;
+
+            metaPanel.innerHTML = html;
+        }
+
+        function createMetaItem(label, value) {
+            return `
+                <div class="meta-item">
+                    <span class="meta-label">${label}</span>
+                    <span class="meta-value">${value}</span>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

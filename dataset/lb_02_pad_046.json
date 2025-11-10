@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "patient": {
+      "id": "SUBJ_046",
+      "gender": "0",
+      "age": "66.0",
+      "height": "155.0",
+      "weight": "70.7",
+      "bmi": "29.4",
+      "foot_size": "240.0",
+      "leg_length_L": "850.0",
+      "leg_length_R": "840.0",
+      "condition": "없음",
+      "symptom": "보행시 통증"
+    }
+  },
+  "data": {
+    "gait_pad": {
+      "source_path": "원천데이터/보행 매트/무릎관절염/02_pad_046.json",
+      "values": {
+        "step_length": {
+          "L": "53.012",
+          "R": "56.649"
+        },
+        "velocity": "83.7",
+        "stance_phase_rate": {
+          "L": "67.2",
+          "R": "67.3"
+        },
+        "swing_phase_rate": {
+          "L": "32.8",
+          "R": "32.7"
+        },
+        "double_support_time": {
+          "L": "34.1",
+          "R": "34.7"
+        }
+      }
+    }
+  },
+  "labels": {
+    "annotation": {
+      "class": "1",
+      "side": "양측",
+      "region": "무릎"
+    },
+    "diagnosis_text": "관절염 증상으로 보행 시 좌우 균형이 맞지 않음"
+  }
+}

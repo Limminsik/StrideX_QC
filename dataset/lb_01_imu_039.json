@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "patient": {
+      "id": "SUBJ_039",
+      "gender": "1",
+      "age": "40.0",
+      "height": "170.0",
+      "weight": "71.6",
+      "bmi": "24.8",
+      "foot_size": "270.0",
+      "leg_length_L": "980.0",
+      "leg_length_R": "970.0",
+      "condition": "없음",
+      "symptom": null
+    }
+  },
+  "data": {
+    "imu_sensor": {
+      "source_path": "원천데이터/IMU 센서/정상/01_imu_039.json",
+      "values": {
+        "gait_cycle": {
+          "L": "1.1",
+          "R": "1.1"
+        },
+        "knee_flexion_max": {
+          "L": "47",
+          "R": "50"
+        },
+        "knee_extension_max": {
+          "L": "13",
+          "R": "11"
+        },
+        "foot_clearance": {
+          "L": "10",
+          "R": "12"
+        }
+      }
+    }
+  },
+  "labels": {
+    "annotation": {
+      "class": "0",
+      "side": null,
+      "region": null
+    },
+    "diagnosis_text": "보행 시 특이사항 없음"
+  }
+}
