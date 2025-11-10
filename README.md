@@ -5,39 +5,9 @@
 StrideX는 **["초거대 AI 확산 생태계 조성 사업"](https://www.msit.go.kr/bbs/view.do?mId=311&bbsSeqNo=100&nttSeqNo=3179387)'의 "2025년 초거대 AI 학습용 데이터 품질검증"** 활용을 위해 개발된 품질 전문 도구입니다.
 
 보행 관련 센서데이터 기반의 근골격계 질환 생체신호 데이터 **의미정확성** 검증을 목적으로 설계되었으며 무릎관절염 등 근골격계 질환 환자의 보행 신호 라벨링 품질을 검증하는 데 특화되어 있습니다.
+ 
+![StrideX_QC Dashboard](./screenshot/Main.png)
 
-![StrideX Dashboard](../StrideX%20Dashboard(v1.0).png)
-
----
-
-## ⚡ 빠른 시작
-
-### 1️⃣ 로컬에서 바로 테스트
-
-```bash
-# Python 스크립트 실행
-python run_local_server.py
-```
-
-브라우저가 자동으로 열리고 `http://localhost:8000`에서 접속 가능합니다!
-
-### 2️⃣ 외부인에게 링크 공유하기 (Netlify 배포) 🌟
-
-```bash
-# 1. 배포 준비
-prepare_for_netlify.bat 실행
-
-# 2. https://www.netlify.com 접속 후 가입
-# 3. "Deploy manually" → 폴더 드래그 앤 드롭
-# 4. 완료! (1분 소요)
-```
-
-**결과:** 영구적인 공개 URL (예: `https://stridex-dashboard.netlify.app`)
-- ✅ 완전 무료
-- ✅ 영구적인 URL
-- ✅ HTTPS 자동 제공
-
-**자세한 가이드:** `DEPLOYMENT_GUIDE.md` 참고
 
 ---
 
@@ -45,10 +15,33 @@ prepare_for_netlify.bat 실행
 
 ### 생체신호 데이터
 - **IMU 센서**: 좌/우 무릎 관절의 보행 지표 비교 분석
+![IMU Sensor](./screenshot/Smart_Insole.png)
 - **스마트인솔**: 일별 압력 분포 및 보행 패턴 추이 분석  
+![Smart Insole](./screenshot/Smart_Insole.png)
 - **보행매트**: 보행 주기, 속도, 입각기/유각기 비율 등 종합 분석
+![Gait Pad](./screenshot/Gait_Pad.png)
+
 
 ### 의미정확성 검증
+- **멀티모달 생체신호 ID 일치성**: 멀티모달 생체신호의 동일 ID 정보 일치성 검증
+![멀티모달 생체신호 ID 일치성](./screenshot/Subjects.png)
+
+- **스마트인솔 데이터 정확성**: 외부 측정 스마트인솔 생체신호 데이터의 Gait Cycle 검증
+![스마트인솔 데이터 정확성](./screenshot/Smartinsole.png)
+
+- **임상정보 기반 관절염 라벨링 정확성**: 생체신호의 메타 및 라벨링 임상 정보에 따른 관절염 라벨링 정확성 검증
+![임상정보 기반 관절염 라벨링 정확성](./screenshot/Meta_Labeling.png)
+
+
+### 검수 시스템
+- ✓ **3단계 검수**: ID 검증 / Gait Cycle / Labeling
+- ✓ **Pass/Fail 버튼**: 클릭만으로 검수 진행
+- ✓ **상태 표시**: 검수 진행 상황 실시간 표시
+- 💾 **CSV 다운로드**: 검수 결과 타임스탬프와 함께 저장
+![Quality Results](./screenshot/Results.png)
+
+
+### 시각화 정보
 - **라벨링 정보**: 질환 분류(정상/무릎관절염), 병변 측, 부위, 진단 내용 표시
 - **환자 생체신호 시각화**: 좌측 발(파란색), 우측 발(주황색) 기반 환자 보행 신호 시각화
 - **지표 설명**: 각 센서별 측정 지표의 의미와 단위 자동 표시
@@ -58,12 +51,6 @@ prepare_for_netlify.bat 실행
 - ✅ **폴더 업로드**: 폴더 전체 업로드로 자동 읽기
 - ✅ **자동 정렬**: Subject ID 순으로 자동 정렬 (SUBJ_001, SUBJ_002...)
 - ✅ **ID 검증**: 3개 센서 파일의 ID 일치 여부 자동 확인
-
-### 검수 시스템
-- ✓ **3단계 검수**: ID 검증 / Gait Cycle / Labeling
-- ✓ **Pass/Fail 버튼**: 클릭만으로 검수 진행
-- ✓ **상태 표시**: 검수 진행 상황 실시간 표시
-- 💾 **CSV 다운로드**: 검수 결과 타임스탬프와 함께 저장
 
 ### 다양한 데이터 형식 지원
 - 스마트인솔, 보행매트, IMU 센서 등 다양한 생체신호 데이터 형식 지원
@@ -173,18 +160,6 @@ prepare_for_netlify.bat 실행
 }
 ```
 
-### 파일 명명 규칙
-
-- ✅ `*_insole_*.json` → Smart Insole
-- ✅ `*_imu_*.json` → IMU Sensor  
-- ✅ `*_pad_*.json` → Gait Pad
-
-**예시:**
-- `lb_01_insole_039.json` ✓
-- `subject_002_imu.json` ✓
-- `data_pad_045.json` ✓
-
----
 
 ## 사용법
 
@@ -200,12 +175,8 @@ prepare_for_netlify.bat 실행
    - ID 검증 / Gait Cycle / Labeling 3단계 검증
 5. **결과 다운로드**: "📥 Download CSV" 버튼으로 검수 결과 저장
 
-### 상세 가이드
 
-- 📖 **로컬 테스트**: `LOCAL_TEST_GUIDE.md`
-- 🚀 **웹 배포**: `DEPLOYMENT_GUIDE.md` (Netlify, GitHub Pages 등)
 
----
 
 ## 데이터 품질 검증을 통한 품질 확보 기대효과
 
@@ -226,101 +197,6 @@ prepare_for_netlify.bat 실행
 
 ---
 
-## 📦 패키지 내용물
-
-```
-stridex-dashboard/
-├── stridex_dashboard_final.html    ⭐ 메인 대시보드 (웹 배포용)
-│
-├── 🖥️ 서버 실행 스크립트
-│   └── run_local_server.py             로컬 테스트 서버 (localhost)
-│
-├── 🚀 배포 도구
-│   └── prepare_for_netlify.bat         Netlify 배포 준비 스크립트
-│
-├── 📚 가이드 문서
-│   ├── README.md                        이 파일 (전체 가이드)
-│   ├── LOCAL_TEST_GUIDE.md             로컬 테스트 상세 가이드
-│   └── DEPLOYMENT_GUIDE.md             웹 배포 가이드 (Netlify, GitHub Pages 등)
-│
-├── 🔨 유틸리티
-│   └── create_sample_data.py           샘플 데이터 생성기
-│
-└── 📁 데이터
-    └── dataset/                         실제 데이터셋 (선택사항)
-```
-
----
-
-## 🔒 보안 및 프라이버시
-
-### 데이터 처리
-- ✅ 모든 데이터는 **브라우저에서만** 처리
-- ✅ 서버로 전송 **절대 안 됨**
-- ✅ 파일은 메모리에만 임시 저장
-- ✅ 페이지 새로고침 시 자동 삭제
-
-### HIPAA 준수
-- ✅ 환자 데이터 로컬 처리
-- ✅ 네트워크 전송 없음
-- ✅ 서버 저장 없음
-
-**주의사항:**
-- 공용 컴퓨터 사용 후 브라우저 탭 닫기
-- 중요 데이터는 다운로드 후 안전하게 보관
-
----
-
-## 🌐 브라우저 지원
-
-### 권장 브라우저
-- ✅ Chrome 90+ (최적)
-- ✅ Edge 90+
-- ✅ Safari 14+
-- ⚠️ Firefox 88+ (폴더 업로드 제한적)
-
-### 모바일
-- 📱 태블릿에서 최적
-- 📱 스마트폰은 큰 화면 권장
-
----
-
-## 📞 지원 및 문제 해결
-
-### 일반적인 문제
-
-**Q: 파일 업로드가 안 돼요**
-```
-A: 
-1. JSON 파일 형식 확인
-2. 파일 크기 확인 (브라우저 제한)
-3. 브라우저 콘솔(F12) 확인
-```
-
-**Q: 폴더 업로드가 안 돼요**
-```
-A:
-1. Chrome/Edge/Safari 사용
-2. Firefox는 제한적 지원
-3. 브라우저 최신 버전 확인
-```
-
-**Q: CSV 다운로드가 안 돼요**
-```
-A:
-1. 팝업 차단 해제
-2. 최소 1개 검증 완료 필요
-3. 다운로드 권한 확인
-```
-
-**Q: Subject가 정렬이 안 돼요**
-```
-A:
-새로고침 후 다시 업로드
-(SUBJ_001, SUBJ_002... 순서로 자동 정렬됨)
-```
-
----
 
 ## Fund
 
@@ -339,28 +215,3 @@ A:
 - **Version**: 1.1
 - **Date**: 2025.01
 - **Contact**: ms4002@gachon.ac.kr
-
-### 버전 히스토리
-
-#### v1.1 (최신)
-- 🚀 **배포 기능 추가**
-  - ✅ Netlify 배포 자동화 스크립트
-  - ✅ 웹 배포 가이드 문서
-- 🎨 UI 개선
-  - ✅ Plotly 차트 툴바 제거
-  - ✅ Gait Cycle 차트 제거 (레이아웃 정리)
-
-#### v1.0 (초기 릴리즈)
-- ✨ 초기 릴리즈
-- ✅ 파일/폴더 업로드
-- ✅ Subject 자동 정렬
-- ✅ ID 검증 자동화
-- ✅ Gait Cycle 계산
-- ✅ Pass/Fail 검수 시스템
-- ✅ CSV 다운로드
-- ✅ 전체 초기화
-- ✅ 에러 핸들링 강화
-
----
-
-**✨ 성공적인 데이터 검수를 기원합니다! ✨**
