@@ -15,22 +15,22 @@ StrideX는 **["초거대 AI 확산 생태계 조성 사업"](https://www.msit.go
 
 ### 생체신호 데이터
 - **IMU 센서**: 좌/우 무릎 관절의 보행 지표 비교 분석
-![IMU Sensor](./screenshot/Smart_Insole.png)
+
 - **스마트인솔**: 일별 압력 분포 및 보행 패턴 추이 분석  
-![Smart Insole](./screenshot/Smart_Insole.png)
+
 - **보행매트**: 보행 주기, 속도, 입각기/유각기 비율 등 종합 분석
-![Gait Pad](./screenshot/Gait_Pad.png)
+
 
 
 ### 의미정확성 검증
 - **멀티모달 생체신호 ID 일치성**: 멀티모달 생체신호의 동일 ID 정보 일치성 검증
-![멀티모달 생체신호 ID 일치성](./screenshot/Subjects.png)
+
 
 - **스마트인솔 데이터 정확성**: 외부 측정 스마트인솔 생체신호 데이터의 Gait Cycle 검증
-![스마트인솔 데이터 정확성](./screenshot/Smartinsole.png)
+
 
 - **임상정보 기반 관절염 라벨링 정확성**: 생체신호의 메타 및 라벨링 임상 정보에 따른 관절염 라벨링 정확성 검증
-![임상정보 기반 관절염 라벨링 정확성](./screenshot/Meta_Labeling.png)
+
 
 
 ### 검수 시스템
@@ -38,7 +38,7 @@ StrideX는 **["초거대 AI 확산 생태계 조성 사업"](https://www.msit.go
 - ✓ **Pass/Fail 버튼**: 클릭만으로 검수 진행
 - ✓ **상태 표시**: 검수 진행 상황 실시간 표시
 - 💾 **CSV 다운로드**: 검수 결과 타임스탬프와 함께 저장
-![Quality Results](./screenshot/Results.png)
+
 
 
 ### 시각화 정보
