@@ -1,0 +1,312 @@
+{
+  "meta": {
+    "patient": {
+      "id": "SUBJ_039",
+      "gender": "1",
+      "age": "40.0",
+      "height": "170.0",
+      "weight": "71.6",
+      "bmi": "24.8",
+      "foot_size": "270.0",
+      "leg_length_L": "980.0",
+      "leg_length_R": "970.0",
+      "condition": "없음",
+      "symptom": null
+    }
+  },
+  "data": {
+    "smart_insole": {
+      "source_path": "원천데이터/스마트인솔/정상/01_insole_039.json",
+      "values": {
+        "day_1": {
+          "balance": {
+            "L": "50",
+            "R": "50"
+          },
+          "stride_length": {
+            "L": "142",
+            "R": "135"
+          },
+          "gait_distance": "1250",
+          "gait_speed": "4.4",
+          "foot_pressure_fore": {
+            "L": "41",
+            "R": "47"
+          },
+          "foot_pressure_mid": {
+            "L": "34",
+            "R": "29"
+          },
+          "foot_pressure_rear": {
+            "L": "25",
+            "R": "24"
+          },
+          "foot_angle": {
+            "L": "1",
+            "R": "1"
+          }
+        },
+        "day_2": {
+          "balance": {
+            "L": "50",
+            "R": "50"
+          },
+          "stride_length": {
+            "L": "146",
+            "R": "144"
+          },
+          "gait_distance": "4090",
+          "gait_speed": "4.9",
+          "foot_pressure_fore": {
+            "L": "44",
+            "R": "50"
+          },
+          "foot_pressure_mid": {
+            "L": "37",
+            "R": "29"
+          },
+          "foot_pressure_rear": {
+            "L": "19",
+            "R": "21"
+          },
+          "foot_angle": {
+            "L": "1",
+            "R": "1"
+          }
+        },
+        "day_3": {
+          "balance": {
+            "L": "50",
+            "R": "50"
+          },
+          "stride_length": {
+            "L": "134",
+            "R": "130"
+          },
+          "gait_distance": "1610",
+          "gait_speed": "4.2",
+          "foot_pressure_fore": {
+            "L": "42",
+            "R": "45"
+          },
+          "foot_pressure_mid": {
+            "L": "41",
+            "R": "32"
+          },
+          "foot_pressure_rear": {
+            "L": "17",
+            "R": "23"
+          },
+          "foot_angle": {
+            "L": "1",
+            "R": "1"
+          }
+        },
+        "day_4": {
+          "balance": {
+            "L": "50",
+            "R": "50"
+          },
+          "stride_length": {
+            "L": "132",
+            "R": "128"
+          },
+          "gait_distance": "1590",
+          "gait_speed": "4.1",
+          "foot_pressure_fore": {
+            "L": "39",
+            "R": "47"
+          },
+          "foot_pressure_mid": {
+            "L": "37",
+            "R": "26"
+          },
+          "foot_pressure_rear": {
+            "L": "24",
+            "R": "27"
+          },
+          "foot_angle": {
+            "L": "1",
+            "R": "1"
+          }
+        },
+        "day_5": {
+          "balance": {
+            "L": "50",
+            "R": "50"
+          },
+          "stride_length": {
+            "L": "127",
+            "R": "123"
+          },
+          "gait_distance": "1660",
+          "gait_speed": "3.6",
+          "foot_pressure_fore": {
+            "L": "36",
+            "R": "42"
+          },
+          "foot_pressure_mid": {
+            "L": "38",
+            "R": "29"
+          },
+          "foot_pressure_rear": {
+            "L": "26",
+            "R": "29"
+          },
+          "foot_angle": {
+            "L": "1",
+            "R": "1"
+          }
+        },
+        "day_6": {
+          "balance": {
+            "L": "51",
+            "R": "49"
+          },
+          "stride_length": {
+            "L": "126",
+            "R": "123"
+          },
+          "gait_distance": "2500",
+          "gait_speed": "3.7",
+          "foot_pressure_fore": {
+            "L": "38",
+            "R": "411"
+          },
+          "foot_pressure_mid": {
+            "L": "39",
+            "R": "30"
+          },
+          "foot_pressure_rear": {
+            "L": "23",
+            "R": "29"
+          },
+          "foot_angle": {
+            "L": "1",
+            "R": "1"
+          }
+        },
+        "day_7": {
+          "balance": {
+            "L": "51",
+            "R": "49"
+          },
+          "stride_length": {
+            "L": "114",
+            "R": "111"
+          },
+          "gait_distance": "1410",
+          "gait_speed": "2.9",
+          "foot_pressure_fore": {
+            "L": "33",
+            "R": "38"
+          },
+          "foot_pressure_mid": {
+            "L": "38",
+            "R": "28"
+          },
+          "foot_pressure_rear": {
+            "L": "29",
+            "R": "34"
+          },
+          "foot_angle": {
+            "L": "1",
+            "R": "1"
+          }
+        },
+        "day_8": {
+          "balance": {
+            "L": "50",
+            "R": "50"
+          },
+          "stride_length": {
+            "L": "134",
+            "R": "129"
+          },
+          "gait_distance": "1290",
+          "gait_speed": "4",
+          "foot_pressure_fore": {
+            "L": "34",
+            "R": "42"
+          },
+          "foot_pressure_mid": {
+            "L": "43",
+            "R": "30"
+          },
+          "foot_pressure_rear": {
+            "L": "23",
+            "R": "28"
+          },
+          "foot_angle": {
+            "L": "1",
+            "R": "1"
+          }
+        },
+        "day_9": {
+          "balance": {
+            "L": "52",
+            "R": "48"
+          },
+          "stride_length": {
+            "L": "132",
+            "R": "129"
+          },
+          "gait_distance": "2190",
+          "gait_speed": "3.9",
+          "foot_pressure_fore": {
+            "L": "39",
+            "R": "42"
+          },
+          "foot_pressure_mid": {
+            "L": "41",
+            "R": "35"
+          },
+          "foot_pressure_rear": {
+            "L": "20",
+            "R": "23"
+          },
+          "foot_angle": {
+            "L": "1",
+            "R": "1"
+          }
+        },
+        "day_10": {
+          "balance": {
+            "L": "50",
+            "R": "50"
+          },
+          "stride_length": {
+            "L": "119",
+            "R": "117"
+          },
+          "gait_distance": "1110",
+          "gait_speed": "3.2",
+          "foot_pressure_fore": {
+            "L": "35",
+            "R": "40"
+          },
+          "foot_pressure_mid": {
+            "L": "37",
+            "R": "27"
+          },
+          "foot_pressure_rear": {
+            "L": "28",
+            "R": "33"
+          },
+          "foot_angle": {
+            "L": "1",
+            "R": "1"
+          }
+        }
+      }
+    }
+  },
+  "labels": {
+    "annotation": {
+      "class": "0",
+      "side": null,
+      "region": null
+    },
+    "diagnosis_text": "보행 시 특이사항 없음"
+  }
+}

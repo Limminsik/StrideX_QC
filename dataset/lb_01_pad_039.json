@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "patient": {
+      "id": "SUBJ_039",
+      "gender": "1",
+      "age": "40.0",
+      "height": "170.0",
+      "weight": "71.6",
+      "bmi": "24.8",
+      "foot_size": "270.0",
+      "leg_length_L": "980.0",
+      "leg_length_R": "970.0",
+      "condition": "없음",
+      "symptom": null
+    }
+  },
+  "data": {
+    "gait_pad": {
+      "source_path": "원천데이터/보행 매트/정상/01_pad_039.json",
+      "values": {
+        "step_length": {
+          "L": "72.663",
+          "R": "72.318"
+        },
+        "velocity": "130.6",
+        "stance_phase_rate": {
+          "L": "63.5",
+          "R": "62.8"
+        },
+        "swing_phase_rate": {
+          "L": "36.5",
+          "R": "37.2"
+        },
+        "double_support_time": {
+          "L": "26.2",
+          "R": "26.4"
+        }
+      }
+    }
+  },
+  "labels": {
+    "annotation": {
+      "class": "0",
+      "side": null,
+      "region": null
+    },
+    "diagnosis_text": "보행 시 특이사항 없음"
+  }
+}

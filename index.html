@@ -1105,6 +1105,11 @@
                 const insole = subject.files.insole.data.smart_insole.values;
                 const days = Object.keys(insole);
                 
+                // 전체 평균 계산
+                let totalCycleL = 0;
+                let totalCycleR = 0;
+                let totalAvgCycle = 0;
+                
                 html += `
                     <div class="gait-cycle-highlight">
                         <h3><span>👟</span> Smart Insole - Gait Cycle (Day 1-10)</h3>
@@ -1121,6 +1126,10 @@
                     const cycleR = (strideR / 100) / speedMS;
                     const avgCycle = (cycleL + cycleR) / 2;
 
+                    totalCycleL += cycleL;
+                    totalCycleR += cycleR;
+                    totalAvgCycle += avgCycle;
+
                     html += `
                         <div class="gait-cycle-day">
                             <div class="day-label">${day.replace('day_', 'Day ')}</div>
@@ -1133,9 +1142,44 @@
                     `;
                 });
 
+                const avgCycleL = totalCycleL / days.length;
+                const avgCycleR = totalCycleR / days.length;
+                const overallAvg = totalAvgCycle / days.length;
+
+                // labels에서 class 확인
+                const patientClass = subject.files.insole.labels.annotation.class;
+                const isNormal = patientClass === '0';
+
                 html += `
                         </div>
-                        <div style="font-size: 0.85em; opacity: 0.9; margin-top: 10px;">
+                        
+                        <div style="background: rgba(255, 255, 255, 0.2); padding: 20px; border-radius: 10px; margin-top: 20px; backdrop-filter: blur(10px);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <div style="flex: 1;">
+                                    <div style="font-size: 0.9em; opacity: 0.9; margin-bottom: 5px;">전체 10일 평균 Gait Cycle</div>
+                                    <div style="font-size: 2.2em; font-weight: 800;">${overallAvg.toFixed(3)}s</div>
+                                    <div style="font-size: 0.85em; opacity: 0.85; margin-top: 5px;">
+                                        L: ${avgCycleL.toFixed(3)}s | R: ${avgCycleR.toFixed(3)}s
+                                    </div>
+                                </div>
+                                <div style="flex: 1; text-align: right;">
+                                    <div style="font-size: 0.9em; opacity: 0.9; margin-bottom: 10px;">
+                                        <strong>환자 분류:</strong> ${isNormal ? 'Class 0 (정상)' : 'Class 1 (무릎관절염)'}
+                                    </div>
+                                    <div style="background: rgba(255, 255, 255, 0.15); padding: 12px; border-radius: 8px; border: 2px solid rgba(255, 255, 255, 0.3);">
+                                        <div style="font-size: 0.85em; opacity: 0.9; margin-bottom: 5px;">Gait Cycle Pass 범위</div>
+                                        <div style="font-size: 1.2em; font-weight: 700;">
+                                            ${isNormal ? '0.908s ~ 1.334s' : '0.840s ~ 1.638s'}
+                                        </div>
+                                        <div style="font-size: 0.75em; opacity: 0.8; margin-top: 3px;">
+                                            (${isNormal ? '정상' : '무릎관절염'} 기준)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 0.85em; opacity: 0.9; margin-top: 15px;">
                             <strong>계산식:</strong> Gait Cycle = Stride Length (m) / Gait Speed (m/s)
                         </div>
                     </div>
@@ -1180,6 +1224,7 @@
 
                 setTimeout(() => {
                     // Foot Pressure 차트
+                    const dayLabels = days.map(d => d.replace('day_', 'Day '));
                     const foreL = days.map(day => parseFloat(insole[day].foot_pressure_fore.L));
                     const midL = days.map(day => parseFloat(insole[day].foot_pressure_mid.L));
                     const rearL = days.map(day => parseFloat(insole[day].foot_pressure_rear.L));

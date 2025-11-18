@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "patient": {
+      "id": "SUBJ_045",
+      "gender": "0",
+      "age": "66.0",
+      "height": "159.8",
+      "weight": "52.1",
+      "bmi": "20.4",
+      "foot_size": "245.0",
+      "leg_length_L": "880.0",
+      "leg_length_R": "870.0",
+      "condition": "없음",
+      "symptom": "보행시 통증"
+    }
+  },
+  "data": {
+    "imu_sensor": {
+      "source_path": "원천데이터/IMU 센서/무릎관절염/02_imu_045.json",
+      "values": {
+        "gait_cycle": {
+          "L": "1.2",
+          "R": "1.1"
+        },
+        "knee_flexion_max": {
+          "L": "69",
+          "R": "57"
+        },
+        "knee_extension_max": {
+          "L": "4",
+          "R": "6"
+        },
+        "foot_clearance": {
+          "L": "12",
+          "R": "13"
+        }
+      }
+    }
+  },
+  "labels": {
+    "annotation": {
+      "class": "1",
+      "side": "좌측",
+      "region": "무릎"
+    },
+    "diagnosis_text": "관절염 증상으로 보행 시 좌우 균형이 맞지 않음"
+  }
+}
