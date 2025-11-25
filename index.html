@@ -1218,64 +1218,6 @@
                 `;
 
                 html += `</div>`;
-
-                // Foot Pressure 차트
-                html += `<div class="chart-container" id="footPressureChart"></div>`;
-
-                setTimeout(() => {
-                    // Foot Pressure 차트
-                    const dayLabels = days.map(d => d.replace('day_', 'Day '));
-                    const foreL = days.map(day => parseFloat(insole[day].foot_pressure_fore.L));
-                    const midL = days.map(day => parseFloat(insole[day].foot_pressure_mid.L));
-                    const rearL = days.map(day => parseFloat(insole[day].foot_pressure_rear.L));
-
-                    Plotly.newPlot('footPressureChart', [{
-                        x: dayLabels,
-                        y: foreL,
-                        name: 'Forefoot',
-                        type: 'scatter',
-                        mode: 'lines',
-                        stackgroup: 'one',
-                        fillcolor: '#1976d2'
-                    }, {
-                        x: dayLabels,
-                        y: midL,
-                        name: 'Midfoot',
-                        type: 'scatter',
-                        mode: 'lines',
-                        stackgroup: 'one',
-                        fillcolor: '#f57c00'
-                    }, {
-                        x: dayLabels,
-                        y: rearL,
-                        name: 'Rearfoot',
-                        type: 'scatter',
-                        mode: 'lines',
-                        stackgroup: 'one',
-                        fillcolor: '#9c27b0'
-                    }], {
-                        title: {
-                            text: 'Foot Pressure Distribution (Left)',
-                            font: { size: 16, family: 'Segoe UI, sans-serif' }
-                        },
-                        xaxis: { 
-                            title: 'Day',
-                            font: { family: 'Segoe UI, sans-serif' }
-                        },
-                        yaxis: { 
-                            title: 'Pressure (%)',
-                            font: { family: 'Segoe UI, sans-serif' }
-                        },
-                        legend: {
-                            font: { family: 'Segoe UI, sans-serif' }
-                        },
-                        margin: { t: 50, r: 20, b: 50, l: 60 },
-                        font: { family: 'Segoe UI, sans-serif' }
-                    }, {
-                        responsive: true,
-                        displayModeBar: false
-                    });
-                }, 100);
             }
 
             // IMU Sensor
